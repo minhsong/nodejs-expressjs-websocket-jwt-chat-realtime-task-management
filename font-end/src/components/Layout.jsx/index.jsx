@@ -46,9 +46,7 @@ const Layout = ({ children }) => {
         <main className="flex-1 p-4 overflow-y-auto">
           <Routes>
             <Route path="/" element={<TaskManagement />} />
-            {user.userIfo && user.userInfo.role === "admin" && (
-              <Route path="/employee" element={<Employee />} />
-            )}
+            <Route path="/employee" element={<Employee />} />
             <Route path="/chat" element={<Message />} />
             <Route path="/chat/:chatId" element={<Message />} />
             <Route exact path="/profile" element={<UserProfile />} />
