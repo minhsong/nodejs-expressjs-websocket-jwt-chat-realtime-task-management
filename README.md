@@ -1,5 +1,25 @@
 # nodejs-expressjs-websocket-jwt-chat-realtime-task-management
 The demo how to implement realtime update with websocket in nodejs and expressjs
+## Features
+
+### User Authentication
+- Secure login/logout for managers and employees.
+
+### Employee Management Dashboard
+- Add, edit, delete employees.
+- View employee list with details.
+- Send account credentials to new employees via email.
+
+### Real-Time Messaging
+- Enable chat between managers and employees using Socket.io.
+
+### Account Setup for Employees
+- Secure page for employees to set up their account credentials.
+- Email verification link for account setup.
+
+### Task Management
+- Allow employees to mark tasks as done.
+- Profile editing for employees.
 To set up and run the project, follow these steps:
 
 1. Clone the repository:
