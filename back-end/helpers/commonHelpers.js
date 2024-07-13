@@ -11,3 +11,30 @@ exports.generateRandomString = (length = 6, onlyNumber = false) => {
 
   return result;
 };
+
+exports.userMenuBuilder = (user) => {
+  const navs = [
+    {
+      title: "Manage Task",
+      to: "/",
+    },
+    {
+      title: "Message",
+      to: "/chat",
+    },
+  ];
+  if (user.role === "admin") {
+    navs.unshift({
+      title: "Employee",
+      to: "/employee",
+    });
+  }
+  return navs;
+};
+
+exports.removeSensitiveInfo = (user) => {
+  delete user.password;
+  delete user.accessCode;
+  delete user.accessCodeCreatedAt;
+  return user;
+};

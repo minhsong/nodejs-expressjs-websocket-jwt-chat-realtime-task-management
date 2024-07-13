@@ -1,3 +1,4 @@
+const { removeSensitiveInfo } = require("../helpers/commonHelpers");
 const User = require("../Models/user.model");
 const {
   firebaseAdmin,
@@ -12,11 +13,9 @@ exports.getEmployees = async () => {
     if (!usersData) {
       throw new Error("No users found");
     }
-    return Object.keys(usersData).map((id) => ({
-      id,
-      ...usersData[id],
-      password: undefined,
-    }));
+    return Object.keys(usersData).map((id) => {
+      return removeSensitiveInfo({ id, ...usersData[id] });
+    });
   } catch (error) {
     throw new Error("Failed to fetch users: " + error.message);
   }
@@ -29,7 +28,7 @@ exports.getEmployee = async (id) => {
     if (!userData) {
       throw new Error("User not found");
     }
-    return { id, ...userData, password: undefined };
+    return removeSensitiveInfo({ id, ...userData });
   } catch (error) {
     throw new Error("Failed to fetch user: " + error.message);
   }
@@ -37,7 +36,7 @@ exports.getEmployee = async (id) => {
 
 exports.getUserByEmail = async (email) => {
   const existingUser = await User.findByEmail(email);
-  return existingUser;
+  return removeSensitiveInfo(existingUser);
 };
 
 exports.createEmployee = async (user) => {
@@ -46,7 +45,7 @@ exports.createEmployee = async (user) => {
 
     const newUser = new User(email, firstName, lastName, phone, password);
     const userId = await newUser.save();
-    return { id: userId, ...newUser, password: undefined };
+    return removeSensitiveInfo({ id: userId, ...newUser });
   } catch (err) {
     throw new Error(err.message);
   }
@@ -56,7 +55,7 @@ exports.updateEmployee = async (id, user) => {
   try {
     const userRef = usersRef.child(id);
     await userRef.update(user);
-    return { id, ...user };
+    return removeSensitiveInfo({ id, ...user });
   } catch (error) {
     throw new Error("Failed to update user: " + error.message);
   }
@@ -79,7 +78,7 @@ exports.getEmployeeById = async (id) => {
     if (!userData) {
       throw new Error("User not found");
     }
-    return { id, ...userData, password: undefined };
+    return removeSensitiveInfo({ id, ...userData });
   } catch (error) {
     throw new Error("Failed to fetch user: " + error.message);
   }

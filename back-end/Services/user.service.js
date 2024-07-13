@@ -1,4 +1,7 @@
-const { generateRandomString } = require("../helpers/commonHelpers");
+const {
+  generateRandomString,
+  removeSensitiveInfo,
+} = require("../helpers/commonHelpers");
 const {
   comparePasswords,
   jwtSign,
@@ -16,7 +19,7 @@ const register = async (user) => {
     const { email, firstName, lastName, phone, password } = user;
     const newUser = new User(email, firstName, lastName, phone, password);
     const userId = await newUser.save();
-    return { id: userId, ...newUser, password: undefined };
+    return removeSensitiveInfo({ id: userId, ...newUser });
   } catch (err) {
     throw new Error(err.message);
   }
@@ -41,7 +44,7 @@ const login = async (email, password) => {
     if (!passwordMatch) {
       throw new Error("Invalid email or password");
     }
-    return { ...user, password: undefined, userId: userId };
+    return removeSensitiveInfo({ ...user, userId: userId });
   } catch (err) {
     throw new Error(err.message);
   }
@@ -55,7 +58,7 @@ const getUser = async (id) => {
     if (!userData) {
       throw new Error("User not found");
     }
-    return { ...userData, password: undefined };
+    return removeSensitiveInfo({ ...userData, id: id });
   } catch (err) {
     throw new Error(err.message);
   }
@@ -63,7 +66,8 @@ const getUser = async (id) => {
 
 const getUserByEmail = async (email) => {
   const existingUser = await User.findByEmail(email);
-  return existingUser;
+
+  return removeSensitiveInfo(existingUser);
 };
 
 const userOnline = async (id) => {
@@ -140,7 +144,7 @@ const validateAccessCode = async (email, accessCode) => {
     if (timeDifference > 10 * 60 * 1000) {
       throw new Error("Access code expired");
     }
-    return { ...user, userId };
+    return removeSensitiveInfo({ ...user, userId });
   } catch (err) {
     throw new Error(err.message);
   }

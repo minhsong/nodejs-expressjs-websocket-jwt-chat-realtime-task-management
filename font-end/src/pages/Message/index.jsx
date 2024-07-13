@@ -60,9 +60,7 @@ const Message = () => {
       .then((res) => {
         if (res.ok) {
           dispatch(
-            setFriends(
-              res.resData.filter((emp) => emp.email !== user.userInfo.email)
-            )
+            setFriends(res.resData.filter((emp) => emp.id !== user.userInfo.id))
           );
         }
       })

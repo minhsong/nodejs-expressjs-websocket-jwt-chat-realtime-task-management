@@ -1,20 +1,24 @@
 // seed.js
-const userService = require("./Services/user.service");
+const { database } = require("./Services/firebase/firebaseAdmin");
+const { hashPassword } = require("./helpers/jwthelper");
+const usersRef = database.ref("users");
+
 async function seedAdminUser() {
-  const email = "truongminhsong@gmail.com"; // Replace with your admin email
-  const password = "123456"; // Replace with your admin password
+  const email = "admin@example.com"; // Replace with your admin email
+  const password = "adminpassword"; // Replace with your admin password
+  const hashedPassword = await hashPassword(password);
 
   const adminUser = {
     email,
-    firstName: "admin",
+    firstName: "Admin",
     lastName: "User",
-    phone: "+84938505866",
-    password: password,
+    phone: "1234567890",
+    password: hashedPassword,
     role: "admin",
   };
 
   try {
-    userService.register(adminUser);
+    await usersRef.push(adminUser);
     console.log("Admin user created successfully");
   } catch (error) {
     console.error("Error creating admin user:", error);

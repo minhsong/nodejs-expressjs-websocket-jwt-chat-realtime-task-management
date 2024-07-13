@@ -3,6 +3,7 @@ const userService = require("../Services/user.service");
 const { handleError } = require("../helpers/errorHandle.helper");
 const { jwtSign } = require("../helpers/jwthelper");
 const EmailService = require("../Services/EmailService");
+const { userMenuBuilder } = require("../helpers/commonHelpers");
 
 const register = async (req, res) => {
   const data = matchedData(req);
@@ -36,7 +37,8 @@ const login = async (req, res) => {
     .login(email, password)
     .then(async (result) => {
       return res.status(200).send({
-        user: { ...result, userId: undefined },
+        user: { ...result, userId: undefined, navs: userMenuBuilder(result) },
+
         token: await jwtSign({
           id: result.userId,
           email: result.email,
@@ -58,6 +60,7 @@ const getUser = async (req, res) => {
     .getUser(userId)
     .then((result) => {
       result.password = undefined;
+      result.navs = userMenuBuilder(result);
       return res.status(200).send(result);
     })
     .catch((err) => {

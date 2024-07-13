@@ -14,20 +14,6 @@ import Aside from "./Aside";
 import Header from "./Header";
 import UserProfile from "../../pages/Profile.jsx";
 
-const navs = [
-  {
-    title: "Manage Employee",
-    to: "/",
-  },
-  {
-    title: "Manage Task",
-    to: "/task",
-  },
-  {
-    title: "Message",
-    to: "/chat",
-  },
-];
 const Layout = ({ children }) => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -47,19 +33,22 @@ const Layout = ({ children }) => {
     if (!user.isAuthenticated && !user.pending) navigate("/login");
   });
 
-  if (user.pending) return <Loading />;
+  if (user.pending || !user.userInfo) return <Loading />;
+
   return (
     <div className="flex h-screen">
       {/* Left Aside */}
-      <Aside navs={navs} title="Minh Song" />
+      <Aside navs={user.userInfo.navs} title="Minh Song" />
       <div className="flex-1 flex flex-col">
         <Header />
 
         {/* Main Content */}
         <main className="flex-1 p-4 overflow-y-auto">
           <Routes>
-            <Route path="/" element={<Employee />} />
-            <Route path="/task" element={<TaskManagement />} />
+            <Route path="/" element={<TaskManagement />} />
+            {user.userIfo && user.userInfo.role === "admin" && (
+              <Route path="/employee" element={<Employee />} />
+            )}
             <Route path="/chat" element={<Message />} />
             <Route path="/chat/:chatId" element={<Message />} />
             <Route exact path="/profile" element={<UserProfile />} />
