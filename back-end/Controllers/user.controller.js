@@ -4,6 +4,7 @@ const { handleError } = require("../helpers/errorHandle.helper");
 const { jwtSign } = require("../helpers/jwthelper");
 const EmailService = require("../Services/EmailService");
 const { userMenuBuilder } = require("../helpers/commonHelpers");
+const TwilioService = require("../Services/twilioService");
 
 const register = async (req, res) => {
   const data = matchedData(req);
@@ -92,13 +93,22 @@ const newAccessCode = async (req, res) => {
   return await userService
     .newAccessCode(data.email)
     .then((result) => {
-      const emailService = new EmailService();
-      emailService.sendEmail(
-        data.email,
-        "Your Access Code",
-        `Your access code is: ${result.accessCode}`,
-        `<p>Your access code is: <strong>${result.accessCode}</strong></p>`
-      );
+      if (process.env.ACCESS_CODE_VERIFY_METHOD === "EMAIL") {
+        const emailService = new EmailService();
+        emailService.sendEmail(
+          data.email,
+          "Your Access Code",
+          `Your access code is: ${result.accessCode}`,
+          `<p>Your access code is: <strong>${result.accessCode}</strong></p>`
+        );
+      } else {
+        const twilioService = new TwilioService();
+        twilioService.sendSMS(
+          result.phone,
+          `Your access code is: ${result.accessCode}`
+        );
+      }
+
       return res.status(200).send({ success: true });
     })
     .catch((err) => {

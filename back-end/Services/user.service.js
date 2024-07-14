@@ -116,7 +116,7 @@ const newAccessCode = async (email) => {
     user.accessCode = await hashPassword(accessCode);
     user.accessCodeCreatedAt = currentTime;
     await userRef.child(userId).update(user);
-    return { accessCode, userId, email };
+    return { accessCode, userId, email, phone: user.phone };
   } catch (err) {
     throw new Error(err.message);
   }
@@ -141,7 +141,8 @@ const validateAccessCode = async (email, accessCode) => {
     }
     const currentTime = Date.now();
     const timeDifference = currentTime - user.accessCodeCreatedAt;
-    if (timeDifference > 10 * 60 * 1000) {
+    if (timeDifference > process.env.ACCESS_CODE_LENGTH || 900000) {
+      // default 15 minutes
       throw new Error("Access code expired");
     }
     return removeSensitiveInfo({ ...user, userId });

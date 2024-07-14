@@ -1,7 +1,14 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import "intl-tel-input/styles";
+import PhoneInput from "../../components/PhoneInput";
+import {
+  isPossiblePhoneNumber,
+  isValidPhoneNumber,
+  validatePhoneNumberLength,
+} from "libphonenumber-js";
 
 const schema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -10,13 +17,19 @@ const schema = yup.object().shape({
     .string()
     .email("Invalid email format")
     .required("Email is required"),
-  phone: yup.string().required("Phone number is required"),
+  phone: yup
+    .string()
+    .required("Phone number is required")
+    .test("isValidPhone", "Invalid phone number", function (value) {
+      return isValidPhoneNumber(value);
+    }),
 });
 
 const EmployeeFormModal = ({ isOpen, onClose, onSubmit, data }) => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -75,10 +88,12 @@ const EmployeeFormModal = ({ isOpen, onClose, onSubmit, data }) => {
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Phone Number</label>
-            <input
-              type="text"
-              {...register("phone")}
-              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field }) => (
+                <PhoneInput {...field} control={control} />
+              )}
             />
             {errors.phone && (
               <p className="text-red-500 text-sm mt-1">
