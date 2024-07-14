@@ -89,6 +89,10 @@ DATABASE_URL=https://<project id>.firebaseio.com
 TOKEN_EXPIRE_TIME=15d
 JWT_SECRET=your_jwt_secret
 
+ACCESS_CODE_EXPIRE_TIME=900000 #15 minutes
+ACCESS_CODE_LENGTH=6
+ACCESS_CODE_VERIFY_METHOD=EMAIL #EMAIL or SMS
+
 #SMTP EMAIL CONFIG
 EMAIL_FROM_ADDRESS==your-email@example.com
 EMAIL_PASS=your-email-password
