@@ -100,7 +100,10 @@ const updateProfile = async (id, data) => {
 
 const newAccessCode = async (email) => {
   try {
-    const accessCode = generateRandomString(6, true);
+    const accessCode = generateRandomString(
+      process.env.ACCESS_CODE_LENGTH || 6,
+      true
+    );
     const currentTime = Date.now();
     const userRef = database.ref("users");
     const snapshot = await userRef
