@@ -144,7 +144,7 @@ const validateAccessCode = async (email, accessCode) => {
     }
     const currentTime = Date.now();
     const timeDifference = currentTime - user.accessCodeCreatedAt;
-    if (timeDifference > process.env.ACCESS_CODE_LENGTH || 900000) {
+    if (timeDifference > process.env.ACCESS_CODE_EXPIRE_TIME || 900000) {
       // default 15 minutes
       throw new Error("Access code expired");
     }
